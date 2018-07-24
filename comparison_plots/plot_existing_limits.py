@@ -15,15 +15,18 @@ def main():
 
 	ara2_data = np.genfromtxt("limits/ara2_limit.csv",delimiter=',',skip_header=1,names=['energy','limit'])
 	ara2_limit=ara2_data['limit']
-	ara2_aperture = 2.3/ara2_limit/(445.*SecPerDay)/KM2toCM2/2
+	ara2_aperture = 2.3/ara2_limit/(445.*SecPerDay)/KM2toCM2
+	print np.log10(ara2_aperture)
 
 	testbed_data = np.genfromtxt("limits/testbed_limit.csv",delimiter=',',skip_header=1,names=['energy','limit'])
 	testbed_limit=testbed_data['limit']
 	testbed_aperture = 2.3/testbed_limit/(415.*SecPerDay)/KM2toCM2
+	print np.log10(testbed_aperture)
 
 	hra3_data = np.genfromtxt("limits/hra3_limit.csv",delimiter=',',skip_header=1,names=['energy','limit'])
 	hra3_limit=hra3_data['limit']/(hra3_data['energy']/1e9) #need to divide out the GeV
-	hra3_aperture = 2.3/hra3_limit/(170.*SecPerDay)/KM2toCM2/3
+	hra3_aperture = 2.3/hra3_limit/(170.*SecPerDay)/KM2toCM2
+	print np.log10(hra3_aperture)
 
 	fig_efe = plt.figure(figsize=(11,8.5)) #make a figure object
 	ax_efe = fig_efe.add_subplot(1,1,1) #make a subplot
@@ -31,6 +34,13 @@ def main():
 	ax_efe.plot(hra3_data['energy'],hra3_limit,'-^', linewidth=2.0,color='green',label=r'170 Days of 3 ARIANNA Stations')
 	ax_efe.plot(ara2_data['energy'],ara2_data['limit'],'-s', linewidth=2.0,color='blue',label=r'222 Days of 2 ARA 200m Stations')
 	save_limit(fig_efe,ax_efe,"current_limit")
+
+	fig_efe_1yr = plt.figure(figsize=(11,8.5)) #make a figure object
+	ax_efe_1yr = fig_efe_1yr.add_subplot(1,1,1) #make a subplot
+	ax_efe_1yr.plot(testbed_data['energy'],testbed_data['limit']*(415./365.),'-v', linewidth=2.0,color='red',label=r'1 Yr, 1 ARA 30m Testbed (Analysis Level)')
+	ax_efe_1yr.plot(hra3_data['energy'],hra3_limit*(170./365.),'-^', linewidth=2.0,color='green',label=r'1 Yr, 1 ARIANNA Station (Analysis Level)')
+	ax_efe_1yr.plot(ara2_data['energy'],ara2_data['limit']*(445./365.),'-s', linewidth=2.0,color='blue',label=r'1 Yr, 1 ARA 200m Station (Analysis Level)')
+	save_limit(fig_efe_1yr,ax_efe_1yr,"1yr_limit")
 
 	fig_aff = plt.figure(figsize=(11,8.5)) #make a figure object
 	ax_aff = fig_aff.add_subplot(1,1,1) #make a subplot
