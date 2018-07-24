@@ -16,17 +16,14 @@ def main():
 	ara2_data = np.genfromtxt("limits/ara2_limit.csv",delimiter=',',skip_header=1,names=['energy','limit'])
 	ara2_limit=ara2_data['limit']
 	ara2_aperture = 2.3/ara2_limit/(445.*SecPerDay)/KM2toCM2
-	print np.log10(ara2_aperture)
 
 	testbed_data = np.genfromtxt("limits/testbed_limit.csv",delimiter=',',skip_header=1,names=['energy','limit'])
 	testbed_limit=testbed_data['limit']
 	testbed_aperture = 2.3/testbed_limit/(415.*SecPerDay)/KM2toCM2
-	print np.log10(testbed_aperture)
 
 	hra3_data = np.genfromtxt("limits/hra3_limit.csv",delimiter=',',skip_header=1,names=['energy','limit'])
 	hra3_limit=hra3_data['limit']/(hra3_data['energy']/1e9) #need to divide out the GeV
 	hra3_aperture = 2.3/hra3_limit/(170.*SecPerDay)/KM2toCM2
-	print np.log10(hra3_aperture)
 
 	fig_efe = plt.figure(figsize=(11,8.5)) #make a figure object
 	ax_efe = fig_efe.add_subplot(1,1,1) #make a subplot
