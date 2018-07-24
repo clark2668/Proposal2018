@@ -20,6 +20,10 @@ def main():
 	ara2_limit=ara2_data['limit']
 	ara2_aperture = 2.3/ara2_limit/(445.*86400.)/1e10/2
 
+	pa_limit=ara2_data['limit']*(2.*222./365.) #1 year
+	pa_energy=ara2_data['energy']/2
+	pa_aperature = 2.3/pa_limit/(445.*86400.)/1e10/2
+
 	testbed_data = np.genfromtxt("limits/testbed_limit.csv",delimiter=',',skip_header=1,names=['energy','limit'])
 	testbed_limit=testbed_data['limit']
 	testbed_aperture = 2.3/testbed_limit/(415.*86400.)/1e10
@@ -32,25 +36,22 @@ def main():
 	fig_efe = plt.figure(figsize=(11,8.5)) #make a figure object
 	ax_efe = fig_efe.add_subplot(1,1,1) #make a subplot
 	#ax_efe.plot(testbed_data['energy'],testbed_data['limit'],'-v', linewidth=2.0,color='magenta',label=r'1 $\times$ (415 Days of 1 ARA 30m Testbed)')
-	ax_efe.plot(testbed_data['energy'],testbed_data['limit']*(415./365.),'-v', linewidth=2.0,color='red',label=r'365 Days of 1 ARA 30m Testbed (Analysis Level)')
+	ax_efe.plot(testbed_data['energy'],testbed_data['limit']*(415./365.),'-v', linewidth=2.0,color='red',label=r'1 Yr, 1 ARA 30m Testbed (Analysis Level)')
 	#ax_efe.plot(ara2_data['energy'],ara2_data['limit'],'-s', linewidth=2.0,color='blue',label=r'2 $\times$ (222 Days of 1 ARA 200m Station)')
-	ax_efe.plot(hra3_data['energy'],hra3_limit*(3.*170./365.),'-o', linewidth=2.0,color='green',label=r'365 Days of 1 ARIANNA Station (Analysis Level)')
-	ax_efe.plot(ara2_data['energy'],ara2_data['limit']*(2.*222./365.),'-s', linewidth=2.0,color='blue',label=r'365 Days of 1 ARA 200m Station (Analysis Level)')
+	ax_efe.plot(hra3_data['energy'],hra3_limit*(3.*170./365.),'-^', linewidth=2.0,color='green',label=r'1 Yr, 1 ARIANNA Station (Analysis Level)')
+	ax_efe.plot(ara2_data['energy'],ara2_data['limit']*(2.*222./365.),'-s', linewidth=2.0,color='blue',label=r'1 Yr, 1 ARA 200m Station (Analysis Level)')
+	ax_efe.plot(pa_energy,pa_limit,'-o', linewidth=2.0,color='black',label=r'1 Yr, 1 ARA 200m Station + Phased Array ("projected")')
 	save_limit(fig_efe,ax_efe)
 
 	fig_aff = plt.figure(figsize=(11,8.5)) #make a figure object
 	ax_aff = fig_aff.add_subplot(1,1,1) #make a subplot
 	ax_aff_diffu = ax_aff.twinx()
-	ax_aff.plot(ara2_data['energy'],ara2_aperture,'-s', linewidth=2.0,color='blue',label="ARA Deep Station (Analysis Level)")
-	ax_aff.plot(hra3_data['energy'],hra3_aperture,'-o', linewidth=2.0,color='green',label="ARIANNA Station (Analysis Level)")
-	ax_aff.plot(testbed_data['energy'],testbed_aperture,'-v', linewidth=2.0,color='red',label="ARA Testbed Station (Analysis Level)")
+	ax_aff.plot(pa_energy,pa_aperature,'-o', linewidth=2.0,color='black',label='ARA 200m Station + Phased Array ("projected")')
+	ax_aff.plot(ara2_data['energy'],ara2_aperture,'-s', linewidth=2.0,color='blue',label="ARA 200m Station (Analysis Level)")
+	ax_aff.plot(hra3_data['energy'],hra3_aperture,'-^', linewidth=2.0,color='green',label="ARIANNA Station (Analysis Level)")
+	ax_aff.plot(testbed_data['energy'],testbed_aperture,'-v', linewidth=2.0,color='red',label="ARA 30 Testbed Station (Analysis Level)")
 	ax_aff_diffu.plot(testbed_data['energy'],testbed_aperture*1.e10,'-v', linewidth=2.0,color='red')
 	save_aff(fig_aff,ax_aff,ax_aff_diffu)
-
-
-def ara2(axis,color):
-	#this is the limit from Thomas' PRD for the analysis level, 2 stations after 7.5 month of livetime
-	print "unused function"
 
 
 def save_aff(this_fig, this_ax, this_ax2):
@@ -81,6 +82,7 @@ def save_aff(this_fig, this_ax, this_ax2):
 
 	
 	this_fig.savefig('aff.pdf',edgecolor='none',bbox_inches="tight") #save the figure
+	this_fig.savefig('aff.png',edgecolor='none',bbox_inches="tight") #save the figure
 
 
 
@@ -97,9 +99,9 @@ def save_limit(this_fig, this_ax):
 	this_ax.tick_params(labelsize=sizer)
 	this_ax.set_xlim([xlow,xup]) #set the x limits of the plot
 	this_ax.set_ylim([ylow,yup]) #set the y limits of the plot
-	this_ax.legend(loc='lower left')
+	this_ax.legend(loc='lower left',fontsize=11)
 	this_ax.grid()
 	this_fig.savefig('limit.pdf',edgecolor='none',bbox_inches="tight") #save the figure
-
+	this_fig.savefig('limit.png',edgecolor='none',bbox_inches="tight") #save the figure
 
 main()
