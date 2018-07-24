@@ -40,11 +40,12 @@ def main():
 
 	fig_aff = plt.figure(figsize=(11,8.5)) #make a figure object
 	ax_aff = fig_aff.add_subplot(1,1,1) #make a subplot
+	ax_aff_diffu = ax_aff.twinx()
 	ax_aff.plot(ara2_data['energy'],ara2_aperture,'-s', linewidth=2.0,color='blue',label="ARA Deep Station (Analysis Level)")
 	ax_aff.plot(hra3_data['energy'],hra3_aperture,'-o', linewidth=2.0,color='green',label="ARIANNA Station (Analysis Level)")
 	ax_aff.plot(testbed_data['energy'],testbed_aperture,'-v', linewidth=2.0,color='red',label="ARA Testbed Station (Analysis Level)")
-	
-	save_aff(fig_aff,ax_aff)
+	ax_aff_diffu.plot(testbed_data['energy'],testbed_aperture*1.e10,'-v', linewidth=2.0,color='red')
+	save_aff(fig_aff,ax_aff,ax_aff_diffu)
 
 
 def ara2(axis,color):
@@ -52,19 +53,33 @@ def ara2(axis,color):
 	print "unused function"
 
 
-def save_aff(this_fig, this_ax):
+def save_aff(this_fig, this_ax, this_ax2):
 	sizer=20
-	xlow = 1.00e14 #the lower x limit
-	xup = 1e21 #the uppper x limit
+	xlow = 1.e15 #the lower x limit
+	xup = 1.e21 #the uppper x limit
+	ylow = 1.e-7 #the lower x limit
+	yup = 1.e1 #the uppper x limit
 	this_ax.set_xlabel('Energy [eV]',size=sizer) #give it a title
 	this_ax.set_ylabel('A$_{eff}$ $\Omega$ [km$^2$sr]',size=sizer)
 	this_ax.set_yscale('log')
 	this_ax.set_xscale('log')
 	this_ax.tick_params(labelsize=sizer)
 	this_ax.set_xlim([xlow,xup]) #set the x limits of the plot
-	#this_ax.set_ylim([ylow,yup]) #set the y limits of the plot
+	this_ax.set_ylim([ylow,yup]) #set the y limits of the plot
 	this_ax.grid()
 	this_ax.legend(loc='upper left')
+	#this_ax.yaxis.set_major_locator(plt.LogLocator(5))
+	this_ax.set_yticks([1e-7,1e-6,1e-5,1e-4,1e-3,1e-2,1e-1,1e0,1e1])
+	
+	this_ax2.set_ylabel('A$_{eff}$ $\Omega$ [cm$^2$sr]',size=sizer)
+	this_ax2.set_yscale('log')
+	this_ax2.set_xscale('log')
+	this_ax2.tick_params(labelsize=sizer)
+	this_ax2.set_xlim([xlow,xup]) #set the x limits of the plot
+	this_ax2.set_ylim([ylow*1e10,yup*1e10]) #set the y limits of the plot
+	this_ax2.set_yticks([1e-7*1e10,1e-6*1e10,1e-5*1e10,1e-4*1e10,1e-3*1e10,1e-2*1e10,1e-1*1e10,1e0*1e10,1e1*1e10])
+
+	
 	this_fig.savefig('aff.pdf',edgecolor='none',bbox_inches="tight") #save the figure
 
 
