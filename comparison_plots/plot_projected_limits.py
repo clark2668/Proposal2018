@@ -56,15 +56,41 @@ def main():
 	arianna_energy_logev_interp = np.insert(hra3_energy_logev,0,[15.5,16,16.5],axis=0)
 	arianna_energy_interp = np.power(10.,arianna_energy_logev_interp)
 	arianna_limit_interp = np.power(10.,splev(arianna_energy_logev_interp, arianna_interpolator))
-	arianna_aperture_interp = 2.3/arianna_limit_interp/(365.*SecPerDay)/KM2toCM2	
+	arianna_aperture_interp = 2.3/arianna_limit_interp/(365.*SecPerDay)/KM2toCM2
+
+	ahlers_data = np.genfromtxt("limits/ahlers_2012.csv",delimiter=',',skip_header=1,names=['energy','flux'])
+	ahlers_energy_logev = ahlers_data['energy']
+	ahlers_energy = np.power(10.,ahlers_energy_logev)
+	ahlers_limit_log = ahlers_data['flux']
+	ahlers_limit = np.power(10.,ahlers_limit_log) 
+
+	kotera_max_data = np.genfromtxt("limits/kotera_max.csv",delimiter=',',skip_header=1,names=['energy','flux'])
+	kotera_max_energy_logev = kotera_max_data['energy']
+	kotera_max_energy = np.power(10.,kotera_max_energy_logev)
+	kotera_max_limit_log = kotera_max_data['flux']
+	kotera_max_limit = np.power(10.,kotera_max_limit_log) 
+
+	kotera_min_data = np.genfromtxt("limits/kotera_min.csv",delimiter=',',skip_header=1,names=['energy','flux'])
+	kotera_min_energy_logev = kotera_min_data['energy']
+	kotera_min_energy = np.power(10.,kotera_min_energy_logev)
+	kotera_min_limit_log = kotera_min_data['flux']
+	kotera_min_limit = np.power(10.,kotera_min_limit_log)
+
+	#to make a fill between, we need to interpolate the min data to the max data points
+	kotera_min_interpolator = splrep( kotera_min_energy_logev , kotera_min_limit_log,k=1)
+	kotera_min_limit_interp = np.power(10.,splev(kotera_max_energy_logev,kotera_min_interpolator))
+
 
 	fig_efe = plt.figure(figsize=(11,8.5)) #make a figure object
 	ax_efe = fig_efe.add_subplot(1,1,1) #make a subplot
-	#ax_efe.plot(arianna_energy_interp,arianna_limit_interp,'-v', linewidth=2.0,color='magenta',label=r'arianna test')
 	ax_efe.plot(testbed_energy_interp,testbed_limit_interp,'-v', linewidth=2.0,color='red',label=r'1 Yr, 1 ARA 30m Testbed (Analysis Level)')
 	ax_efe.plot(arianna_energy_interp,arianna_limit_interp,'-^', linewidth=2.0,color='green',label=r'1 Yr, 1 ARIANNA Station (Analysis Level)')
 	ax_efe.plot(ara2_energy_interp,ara2_limit_interp,'-s', linewidth=2.0,color='blue',label=r'1 Yr, 1 ARA 200m Station (Analysis Level)')	
 	ax_efe.plot(pa_energy_interp,pa_limit_interp,'-o', linewidth=2.0,color='black',label=r'1 Yr, 1 ARA 200m Station + PA ("projected")')
+	
+	ax_efe.plot(ahlers_energy,ahlers_limit,'--', linewidth=2.0,color='black',label=r'GZK: Ahlers 2012')
+	ax_efe.fill_between(kotera_max_energy,kotera_min_limit_interp,kotera_max_limit,facecolor='lightgray',label='GZK: Kotera 2010')
+
 	save_limit(fig_efe,ax_efe,"base_units_limit")
 
 	fig_aff = plt.figure(figsize=(11,8.5)) #make a figure object
@@ -99,6 +125,8 @@ def main():
 	ax_efe_hybrid.plot(hybrid_energy,hybrid_limit2,'-o', linewidth=2.0,color='red',label='Hybrid: %d Yr, %d ARA + %d ARA/PA + %d ARIANNA'%(num_years2,num_ara2,num_pa2,num_arianna2))
 	ax_efe_hybrid.plot(ara2_energy_interp,ara2_limit_interp,'--', linewidth=2.0,color='blue',label=r'1 Yr, 1 ARA 200m Station (Analysis Level)')
 	ax_efe_hybrid.plot(arianna_energy_interp,arianna_limit_interp,'--', linewidth=2.0,color='green',label=r'1 Yr, 1 ARIANNA Station (Analysis Level)')
+	ax_efe_hybrid.plot(ahlers_energy,ahlers_limit,'--', linewidth=2.0,color='black',label=r'GZK: Ahlers 2012')
+	ax_efe_hybrid.fill_between(kotera_max_energy,kotera_min_limit_interp,kotera_max_limit,facecolor='lightgray',label='GZK: Kotera 2012')
 	save_limit(fig_efe_hybrid,ax_efe_hybrid,"hybrid")
 
 
