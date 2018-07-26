@@ -58,6 +58,18 @@ def main():
 	arianna_limit_interp = np.power(10.,splev(arianna_energy_logev_interp, arianna_interpolator))
 	arianna_aperture_interp = 2.3/arianna_limit_interp/(365.*SecPerDay)/KM2toCM2
 
+	icecube_energy_logev=np.array([15.5,16,16.5,17,17.5,18,18.5,19,19.5,20,20.5])
+	icecube_energy = np.power(10.,icecube_energy_logev)
+
+	#E is in eV
+	#returns number/eV/cm^2/s/sr
+	def icecube_thrumu_function(E):
+		return 3.03 * ((E/1.e14)**-2.19) * 1e-27
+	def icecube_combined_function(E):
+		return 6.7 * ((E/1.e14)**-2.50) * 1e-27
+	icecube_thrumu_efe = icecube_thrumu_function(icecube_energy) * icecube_energy
+	icecube_combined_efe = icecube_combined_function(icecube_energy) * icecube_energy
+
 	ahlers_data = np.genfromtxt("limits/ahlers_2012.csv",delimiter=',',skip_header=1,names=['energy','flux'])
 	ahlers_energy_logev = ahlers_data['energy']
 	ahlers_energy = np.power(10.,ahlers_energy_logev)
@@ -80,17 +92,16 @@ def main():
 	kotera_min_interpolator = splrep( kotera_min_energy_logev , kotera_min_limit_log,k=1)
 	kotera_min_limit_interp = np.power(10.,splev(kotera_max_energy_logev,kotera_min_interpolator))
 
-
 	fig_efe = plt.figure(figsize=(11,8.5)) #make a figure object
 	ax_efe = fig_efe.add_subplot(1,1,1) #make a subplot
 	ax_efe.plot(testbed_energy_interp,testbed_limit_interp,'-v', linewidth=2.0,color='red',label=r'1 Yr, 1 ARA 30m Testbed (Analysis Level)')
 	ax_efe.plot(arianna_energy_interp,arianna_limit_interp,'-^', linewidth=2.0,color='green',label=r'1 Yr, 1 ARIANNA Station (Analysis Level)')
 	ax_efe.plot(ara2_energy_interp,ara2_limit_interp,'-s', linewidth=2.0,color='blue',label=r'1 Yr, 1 ARA 200m Station (Analysis Level)')	
 	ax_efe.plot(pa_energy_interp,pa_limit_interp,'-o', linewidth=2.0,color='black',label=r'1 Yr, 1 ARA 200m Station + PA ("projected")')
-	
 	ax_efe.plot(ahlers_energy,ahlers_limit,'--', linewidth=2.0,color='black',label=r'GZK: Ahlers 2012')
 	ax_efe.fill_between(kotera_max_energy,kotera_min_limit_interp,kotera_max_limit,facecolor='lightgray',label='GZK: Kotera 2010')
-
+	ax_efe.plot(icecube_energy,icecube_thrumu_efe,'-.', linewidth=2.0,color='orange',label=r'IceCube Thru-Mu 2017 (E$^{-2.19}$)')
+	ax_efe.plot(icecube_energy,icecube_combined_efe,':', linewidth=2.0,color='magenta',label=r'IceCube Combined Likelihood 2016 (E$^{-2.50}$)')
 	save_limit(fig_efe,ax_efe,"base_units_limit")
 
 	fig_aff = plt.figure(figsize=(11,8.5)) #make a figure object
@@ -127,6 +138,8 @@ def main():
 	ax_efe_hybrid.plot(arianna_energy_interp,arianna_limit_interp,'--', linewidth=2.0,color='green',label=r'1 Yr, 1 ARIANNA Station (Analysis Level)')
 	ax_efe_hybrid.plot(ahlers_energy,ahlers_limit,'--', linewidth=2.0,color='black',label=r'GZK: Ahlers 2012')
 	ax_efe_hybrid.fill_between(kotera_max_energy,kotera_min_limit_interp,kotera_max_limit,facecolor='lightgray',label='GZK: Kotera 2012')
+	ax_efe_hybrid.plot(icecube_energy,icecube_thrumu_efe,'-.', linewidth=2.0,color='orange',label=r'IceCube Thru-Mu 2017 (E$^{-2.19}$)')
+	ax_efe_hybrid.plot(icecube_energy,icecube_combined_efe,':', linewidth=2.0,color='magenta',label=r'IceCube Combined Likelihood 2016 (E$^{-2.50}$)')
 	save_limit(fig_efe_hybrid,ax_efe_hybrid,"hybrid")
 
 
@@ -164,7 +177,7 @@ def save_limit(this_fig, this_ax,title):
 	this_ax.tick_params(labelsize=sizer)
 	this_ax.set_xlim([xlow,xup]) #set the x limits of the plot
 	this_ax.set_ylim([ylow,yup]) #set the y limits of the plot
-	this_ax.legend(loc='lower left')
+	this_ax.legend(loc='upper right',fontsize=13)
 	this_ax.grid()
 	this_fig.savefig(title+".pdf",edgecolor='none',bbox_inches="tight") #save the figure
 	this_fig.savefig(title+".png",edgecolor='none',bbox_inches="tight") #save the figure
