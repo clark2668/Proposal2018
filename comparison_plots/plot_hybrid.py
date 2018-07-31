@@ -10,6 +10,10 @@ from pylab import setp
 SecPerDay = 86400. #second in a year
 KM2toCM2 = 1.e10 #multiply by this to convert from km^2 to cm^2 (divide to go the other way)
 
+#plots the projected limit from a combination of ARA, ARIANNA, and PA stations
+#plots limits and effective areas side by side
+#also, correctly accounts for relative livetimes between an autonomous and cabled station
+
 def main():
 
 	ara2_data = np.genfromtxt("limits/ara2_limit.csv",delimiter=',',skip_header=1,names=['energy','limit'])
