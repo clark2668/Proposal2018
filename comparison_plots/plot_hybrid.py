@@ -197,15 +197,14 @@ def main():
 	hybrid_aeff_with_livetime = hybrid_aeff_cabled_with_livetime + hybrid_aeff_autonomous_with_livetime
 	
 	#now we can actually compute the limit setting power
-	hybrid_cabled_limit = 1/hybrid_aeff_cabled_with_livetime
-	hybird_autonomous_limit = 1/hybrid_aeff_autonomous_with_livetime
-	hybrid_limit = 1/hybrid_aeff_with_livetime
+	hybrid_cabled_limit = 1./hybrid_aeff_cabled_with_livetime
+	hybird_autonomous_limit = 1./hybrid_aeff_autonomous_with_livetime
+	hybrid_limit = 1./hybrid_aeff_with_livetime
 
 	
 	'''
 		Now we make plots
 	'''
-
 
 	fig = plt.figure(figsize=(2*11,8.5)) #make a figure object
 	ax_efe = fig.add_subplot(1,2,1) #make a subplot for the limit
