@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import numpy as np #import numpy
 import matplotlib.pyplot as plt #import matplotlib
-from matplotlib.pyplot import rcParams
+from matplotlib.pyplot import *
 rcParams['mathtext.default'] = 'regular'
 import math
 from scipy.interpolate import interp1d, splrep, splev
@@ -107,13 +107,32 @@ def main():
 
 	#E is in eV
 	#returns number/eV/cm^2/s/sr
+
+	#we can first have the IceCube thru-mu fluxes
+	#we can have the nomina, and upper and lower 1 sigma possibilities
 	def icecube_thrumu_function(E):
 		return 3.03 * ((E/1.e14)**-2.19) * 1e-27
+	def icecube_thrumu_upper_function(E):
+		return 3.81 * ((E/1.e14)**-2.09) * 1e-27
+	def icecube_thrumu_lower_function(E):
+		return 2.34 * ((E/1.e14)**-2.29) * 1e-27
+	
+
 	def icecube_combined_function(E):
 		return 6.7 * ((E/1.e14)**-2.50) * 1e-27
+	def icecube_combined_upper_function(E):
+		return 7.8 * ((E/1.e14)**-2.41) * 1e-27
+	def icecube_combined_lower_function(E):
+		return 5.5 * ((E/1.e14)**-2.59) * 1e-27
 	#to compute to a curve on EF(E) we have to multiply by energy
 	icecube_thrumu_efe = icecube_thrumu_function(icecube_energy) * icecube_energy
+	icecube_thrumu_upper_efe = icecube_thrumu_upper_function(icecube_energy) * icecube_energy
+	icecube_thrumu_lower_efe = icecube_thrumu_lower_function(icecube_energy) * icecube_energy
+
 	icecube_combined_efe = icecube_combined_function(icecube_energy) * icecube_energy
+	icecube_combined_upper_efe = icecube_combined_upper_function(icecube_energy) * icecube_energy
+	icecube_combined_lower_efe = icecube_combined_lower_function(icecube_energy) * icecube_energy
+
 
 	'''
 		Okay, now we need to pull in some theoretical limits
@@ -178,9 +197,9 @@ def main():
 	hybrid_aeff_with_livetime = hybrid_aeff_cabled_with_livetime + hybrid_aeff_autonomous_with_livetime
 	
 	#now we can actually compute the limit setting power
-	hybrid_cabled_limit = 2.3/hybrid_aeff_cabled_with_livetime
-	hybird_autonomous_limit = 2.3/hybrid_aeff_autonomous_with_livetime
-	hybrid_limit = 2.3/hybrid_aeff_with_livetime
+	hybrid_cabled_limit = 1/hybrid_aeff_cabled_with_livetime
+	hybird_autonomous_limit = 1/hybrid_aeff_autonomous_with_livetime
+	hybrid_limit = 1/hybrid_aeff_with_livetime
 
 	
 	'''
@@ -192,17 +211,23 @@ def main():
 	ax_efe = fig.add_subplot(1,2,1) #make a subplot for the limit
 	ax_aeff = fig.add_subplot(1,2,2) #make a subplot for the effective areas
 
-	ax_efe.plot(ahlers_energy,ahlers_limit,'--', linewidth=3.0,color='darkgrey')#,label=r'GZK: Ahlers 2012')
-	ax_efe.fill_between(kotera_max_energy,kotera_min_limit_interp,kotera_max_limit,facecolor='lightgray')#,label='GZK: Kotera 2010')
-	ax_efe.plot(icecube_energy,icecube_thrumu_efe,'-.', linewidth=3.0,color='orange')#,label=r'IceCube Thru-Mu 2017 (E$^{-2.19}$)')
-	ax_efe.plot(icecube_energy,icecube_combined_efe,':', linewidth=3.0,color='magenta')#,label=r'IceCube Combined Likelihood 2016 (E$^{-2.50}$)')	
+	ax_efe.plot(ahlers_energy,ahlers_limit,'-', linewidth=3.0,color='gray',label="Ahlers 2012")
+	#ax_efe.fill_between(kotera_max_energy,kotera_min_limit_interp,kotera_max_limit,facecolor='lightgray',label="Kotera")
+	ax_efe.fill_between(icecube_energy,icecube_thrumu_lower_efe,icecube_thrumu_upper_efe,facecolor='orange',alpha=0.3)
+	ax_efe.fill_between(icecube_energy,icecube_combined_lower_efe,icecube_combined_upper_efe,facecolor='magenta',alpha=0.3)	
+	ax_efe.plot(icecube_energy,icecube_thrumu_efe,'-.', linewidth=3.0,color='orange',label=r'IceCube Thru-Mu (E$^{-2.19}$)')
+	ax_efe.plot(icecube_energy,icecube_combined_efe,':', linewidth=3.0,color='magenta',label='IceCube Combined (E$^{-2.50}$)')	
+
+	#how many theory curves did we add above?
+	num_theory=3
 
 	#ax_efe.plot(arianna_energy_interp,arianna_limit_interp/0.68,'--^', linewidth=2.0,color='blue',label=r'0.6 Yr $\times$ 1 ARIANNA')
 	#ax_efe.plot(ara2_energy_interp,ara2_limit_interp,'--v', linewidth=2.0,color='green',label=r'1 Yr $\times$ 1 ARA 200m')	
-	ax_efe.plot(hybrid_energy,hybird_autonomous_limit,'--^', linewidth=3.0,color='blue',label=r'Auto: (0.6 $\times$ %d Yrs) $\times$ (%d ARIANNA)'%(num_years,num_arianna))
+	auto_plot = ax_efe.plot(hybrid_energy,hybird_autonomous_limit,'--^', linewidth=3.0,color='blue',label=r'Auto: (0.6 $\times$ %d Yrs) $\times$ (%d ARIANNA)'%(num_years,num_arianna))
 	ax_efe.plot(hybrid_energy,hybrid_cabled_limit,'--v', linewidth=3.0,color='green',label=r'Cable: (%d Yrs) $\times$ (%d ARA + %d PA)'%(num_years,num_ara,num_pa))	
 	ax_efe.plot(hybrid_energy,hybrid_limit,'-s', linewidth=3.0,color='black',label='Hybrid: %d ARIANNA + %d ARA + %d PA'%(num_arianna,num_ara,num_pa))	
-	beautify_limit(ax_efe)
+
+	beautify_limit(ax_efe,num_theory)
 
 	ax_aeff.plot(hybrid_energy,hybrid_aeff_autonomous,'--^', linewidth=3.0,color='blue',label='Auto: %d ARIANNA'%num_arianna)
 	ax_aeff.plot(hybrid_energy,hybrid_aeff_cabled,'--v', linewidth=3.0,color='green',label='Cable: %d ARA + %d PA'%(num_ara,num_pa))
@@ -234,8 +259,9 @@ def beautify_aeff(this_ax):
 	setp(this_legend.get_title(), fontsize=17)
 	this_ax.set_yticks([1e-7,1e-6,1e-5,1e-4,1e-3,1e-2,1e-1,1e0,1e1])
 
-
-def beautify_limit(this_ax):
+#pass it the axes and the number of theory curves you're including
+#always pass the theory curves first
+def beautify_limit(this_ax, num_theory):
 	sizer=20
 	xlow =  1.e14 #the lower x limit
 	xup = 1e21 #the uppper x limit
@@ -248,9 +274,14 @@ def beautify_limit(this_ax):
 	this_ax.tick_params(labelsize=sizer)
 	this_ax.set_xlim([xlow,xup]) #set the x limits of the plot
 	this_ax.set_ylim([ylow,yup]) #set the y limits of the plot
-	this_legend = this_ax.legend(loc='upper right', title='Analysis Level')
-	setp(this_legend.get_texts(), fontsize=17)
-	setp(this_legend.get_title(), fontsize=17)
+	handles, labels = this_ax.get_legend_handles_labels()
+	legend1 = this_ax.legend(handles[0:num_theory], labels[0:num_theory], loc='lower left',title='Flux Models')
+	this_ax.add_artist(legend1)
+	legend2 = this_ax.legend(handles[num_theory:], labels[num_theory:], loc='upper right',title='Single Event Sensitivity (Analysis Level)')
+	setp(legend1.get_texts(), fontsize=17)
+	setp(legend1.get_title(), fontsize=17)
+	setp(legend2.get_texts(), fontsize=17)
+	setp(legend2.get_title(), fontsize=17)
 	this_ax.grid()
 
 main()
