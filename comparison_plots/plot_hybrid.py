@@ -241,7 +241,7 @@ def main():
 
 def beautify_aeff(this_ax):
 	sizer=20
-	xlow = 1.e14 #the lower x limit
+	xlow = 1.e15 #the lower x limit
 	xup = 1.e21 #the uppper x limit
 	ylow = 1.e-8 #the lower x limit
 	yup = 1.e1 #the uppper x limit
@@ -262,7 +262,7 @@ def beautify_aeff(this_ax):
 #always pass the theory curves first
 def beautify_limit(this_ax, num_theory):
 	sizer=20
-	xlow =  1.e14 #the lower x limit
+	xlow =  1.e15 #the lower x limit
 	xup = 1e21 #the uppper x limit
 	ylow = 1e-20 #the lower y limit
 	yup = 1e-10 #the upper y limit
