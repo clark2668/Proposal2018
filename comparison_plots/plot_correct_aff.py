@@ -32,20 +32,36 @@ def main():
 	ara2_limit_interp = np.power(10.,splev(ara2_energy_logev_interp, ara2_interpolator))
 	ara2_aeff_interp = 2.44/np.log(10)/0.5/ara2_limit_interp/(365.*SecPerDay)
 
-	print "A2 Aeff interp: ", ara2_aeff_interp
-
 	icecube_energy_logev=np.array([16,16.5,17,17.5,18,18.5,19,19.5,20,20.5])
 	icecube_energy = np.power(10.,icecube_energy_logev)
 	def icecube_thrumu_function(E):
 		return 3.03 * ((E/1.e14)**-2.19) * 1e-27
 	icecube_thrumu_efe = icecube_thrumu_function(icecube_energy)
 
-	print "IceCube Flux: ", icecube_thrumu_efe
-
 	livetime = 37.*365.*86400.
 
+	energy_for_integral_logev = np.arange(16,20.5,0.01) #finely spaced grid
+	energy_for_integral = np.power(10.,energy_for_integral_logev)
+	icecube_thrumu_efe_for_integral = icecube_thrumu_function(energy_for_integral)
+	ara2_aeff_interp_for_integral = 2.44/np.log(10)/0.5/np.power(10.,splev(energy_for_integral_logev, ara2_interpolator))/(365.*SecPerDay)
+
 	counts = np.trapz(icecube_thrumu_efe*ara2_aeff_interp*livetime,icecube_energy)
-	print "Counts: ",counts
+	#print "Counts Simple Try: ",counts
+
+	counts = np.trapz(icecube_thrumu_efe_for_integral*ara2_aeff_interp_for_integral*livetime,energy_for_integral)
+	print "Counts Finer Binning Try: ",counts
+
+	counts_try2=[]
+	bins = np.arange(16,21,0.5)
+	for bin in bins:
+		temp_logev = np.arange(bin,bin+0.5,0.01)
+		temp_energy = np.power(10.,temp_logev)
+		temp_icecube = icecube_thrumu_function(temp_energy)
+		temp_ara2_aeff = 2.44/np.log(10)/0.5/np.power(10.,splev(temp_logev, ara2_interpolator))/(365.*SecPerDay)
+		temp_counts = np.trapz(temp_icecube*temp_ara2_aeff*livetime,temp_energy)
+		counts_try2.append(temp_counts)
+	print "Counts Multi-Bin Method: ",counts
+
 
 	fig = plt.figure(figsize=(2.*11,8.5))
 	ax_limit = fig.add_subplot(1,2,1)
