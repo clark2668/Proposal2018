@@ -38,7 +38,7 @@ def main():
 		return 3.03 * ((E/1.e14)**-2.19) * 1e-27
 	icecube_thrumu_efe = icecube_thrumu_function(icecube_energy)
 
-	livetime = 37.*365.*86400.
+	livetime = 365.*86400.
 
 	energy_for_integral_logev = np.arange(16,20.5,0.01) #finely spaced grid
 	energy_for_integral = np.power(10.,energy_for_integral_logev)
@@ -75,11 +75,11 @@ def main():
 	ax_counts = fig.add_subplot(1,3,3)
 
 	ax_limit.plot(icecube_energy,icecube_thrumu_efe*icecube_energy,'-.', linewidth=3.0,color='orange',label=r'IceCube Thru-Mu (E$^{-2.19}$)')
-	ax_limit.plot(ara2_energy,ara2_limit,'-s', linewidth=2.0,color='blue',label=r'225 Days of 2 ARA 200m Stations')
-	# ax_limit.plot(ara2_energy,ara2_limit_1yr,'--s', linewidth=2.0,color='blue',label=r'1 Yr of 1 ARA 200m Staion')
+	# ax_limit.plot(ara2_energy,ara2_limit,'-s', linewidth=2.0,color='blue',label=r'225 Days of 2 ARA 200m Stations')
+	ax_limit.plot(ara2_energy,ara2_limit_1yr,'-s', linewidth=2.0,color='blue',label=r'1 Yr of 1 ARA 200m Staion')
 	beautify_limit(ax_limit, 1)
 
-	ax_aff.plot(ara2_data['energy'],ara2_aperture,'-s', linewidth=2.0,color='blue',label="ARA 200m Station")
+	ax_aff.plot(ara2_data['energy'],ara2_aperture,'-s', linewidth=2.0,color='blue',label="1 ARA 200m Station")
 	beautify_aeff(ax_aff)
 
 	n, bins, patches= ax_counts.hist(energy_try2,
@@ -91,7 +91,7 @@ def main():
 	print n
 	beautify_counts(ax_counts)
 
-	fig.savefig("limit_and_aff_and)counts.png",edgecolor='none',bbox_inches="tight") #save the figure
+	fig.savefig("limit_and_aff_and_counts.png",edgecolor='none',bbox_inches="tight") #save the figure
 
 def beautify_aeff(this_ax):
 	sizer=20
