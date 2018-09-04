@@ -60,12 +60,14 @@ def main():
 		temp_ara2_aeff = 2.44/np.log(10)/0.5/np.power(10.,splev(temp_logev, ara2_interpolator))/(365.*SecPerDay)
 		temp_counts = np.trapz(temp_icecube*temp_ara2_aeff*livetime,temp_energy)
 		counts_try2.append(temp_counts)
-	print "Counts Multi-Bin Method: ",counts
+	counts_try2 = np.array(counts_try2)
+	print counts_try2
+	print "Counts Multi-Bin Method: ",counts_try2.sum()
 
-
-	fig = plt.figure(figsize=(2.*11,8.5))
-	ax_limit = fig.add_subplot(1,2,1)
-	ax_aff = fig.add_subplot(1,2,2)
+	fig = plt.figure(figsize=(3.*11,8.5))
+	ax_limit = fig.add_subplot(1,3,1)
+	ax_aff = fig.add_subplot(1,3,2)
+	ax_counts = fig.add_subplot(1,3,3)
 
 	ax_limit.plot(icecube_energy,icecube_thrumu_efe,'-.', linewidth=3.0,color='orange',label=r'IceCube Thru-Mu (E$^{-2.19}$)')
 	ax_limit.plot(ara2_energy,ara2_limit,'-s', linewidth=2.0,color='blue',label=r'225 Days of 2 ARA 200m Stations')
@@ -74,6 +76,8 @@ def main():
 
 	ax_aff.plot(ara2_data['energy'],ara2_aperture,'-s', linewidth=2.0,color='blue',label="ARA 200m Station")
 	beautify_aeff(ax_aff)
+
+	ax_counts.hist(counts_try2)
 
 	fig.savefig("limit_and_aff.png",edgecolor='none',bbox_inches="tight") #save the figure
 
