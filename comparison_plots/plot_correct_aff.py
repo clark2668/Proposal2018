@@ -52,6 +52,7 @@ def main():
 	print "Counts Finer Binning Try: ",counts
 
 	counts_try2=[]
+	energy_try2=[]
 	bins = np.arange(16,21,0.5)
 	for bin in bins:
 		temp_logev = np.arange(bin,bin+0.5,0.01)
@@ -60,8 +61,12 @@ def main():
 		temp_ara2_aeff = 2.44/np.log(10)/0.5/np.power(10.,splev(temp_logev, ara2_interpolator))/(365.*SecPerDay)
 		temp_counts = np.trapz(temp_icecube*temp_ara2_aeff*livetime,temp_energy)
 		counts_try2.append(temp_counts)
+		energy_try2.append(np.power(10.,bin))
 	counts_try2 = np.array(counts_try2)
-	print counts_try2
+	energy_try2 = np.array(energy_try2)
+	# for count, energy in zip(counts_try2,energy_try2):
+	# 	print "Energy %.2f, Counts %.2f "%(np.log10(energy),count)
+
 	print "Counts Multi-Bin Method: ",counts_try2.sum()
 
 	fig = plt.figure(figsize=(3.*11,8.5))
@@ -69,17 +74,24 @@ def main():
 	ax_aff = fig.add_subplot(1,3,2)
 	ax_counts = fig.add_subplot(1,3,3)
 
-	ax_limit.plot(icecube_energy,icecube_thrumu_efe,'-.', linewidth=3.0,color='orange',label=r'IceCube Thru-Mu (E$^{-2.19}$)')
+	ax_limit.plot(icecube_energy,icecube_thrumu_efe*icecube_energy,'-.', linewidth=3.0,color='orange',label=r'IceCube Thru-Mu (E$^{-2.19}$)')
 	ax_limit.plot(ara2_energy,ara2_limit,'-s', linewidth=2.0,color='blue',label=r'225 Days of 2 ARA 200m Stations')
-	ax_limit.plot(ara2_energy,ara2_limit_1yr,'--s', linewidth=2.0,color='blue',label=r'1 Yr of 1 ARA 200m Staion')
+	# ax_limit.plot(ara2_energy,ara2_limit_1yr,'--s', linewidth=2.0,color='blue',label=r'1 Yr of 1 ARA 200m Staion')
 	beautify_limit(ax_limit, 1)
 
 	ax_aff.plot(ara2_data['energy'],ara2_aperture,'-s', linewidth=2.0,color='blue',label="ARA 200m Station")
 	beautify_aeff(ax_aff)
 
-	ax_counts.hist(counts_try2)
+	n, bins, patches= ax_counts.hist(energy_try2,
+										bins=np.power(10.,np.arange(16,22,1)),
+										weights=counts_try2,
+										edgecolor='black',
+										color='blue',
+										label='IceCube Thru-Mu, 1 Year: %.2f'%counts_try2.sum())
+	print n
+	beautify_counts(ax_counts)
 
-	fig.savefig("limit_and_aff.png",edgecolor='none',bbox_inches="tight") #save the figure
+	fig.savefig("limit_and_aff_and)counts.png",edgecolor='none',bbox_inches="tight") #save the figure
 
 def beautify_aeff(this_ax):
 	sizer=20
@@ -120,11 +132,31 @@ def beautify_limit(this_ax, num_theory):
 	handles, labels = this_ax.get_legend_handles_labels()
 	legend1 = this_ax.legend(handles[0:num_theory], labels[0:num_theory], loc='lower left',title='Flux Models')
 	this_ax.add_artist(legend1)
-	legend2 = this_ax.legend(handles[num_theory:], labels[num_theory:], loc='upper right',title='Limit (Analysis Level)')
+	legend2 = this_ax.legend(handles[num_theory:], labels[num_theory:], loc='upper right',title='Analysis Level')
 	setp(legend1.get_texts(), fontsize=17)
 	setp(legend1.get_title(), fontsize=17)
 	setp(legend2.get_texts(), fontsize=17)
 	setp(legend2.get_title(), fontsize=17)
 	this_ax.grid()
+
+#pass it the axes and the number of theory curves you're including
+#always pass the theory curves first
+def beautify_counts(this_ax):
+	sizer=20
+	xlow =  1.e15 #the lower x limit
+	xup = 1e21 #the uppper x limit
+	ylow = 1e-20 #the lower y limit
+	yup = 1e-10 #the upper y limit
+	this_ax.set_xlabel('Energy [eV]',size=sizer) #give it a title
+	this_ax.set_ylabel('Events',size=sizer)
+	#this_ax.set_yscale('log')
+	this_ax.set_xscale('log')
+	this_ax.tick_params(labelsize=sizer)
+	this_ax.set_xlim([xlow,xup]) #set the x limits of the plot
+	#this_ax.set_ylim([ylow,yup]) #set the y limits of the plot
+	this_ax.grid()
+	this_legend = this_ax.legend(loc='lower right',title='Analysis Level Event Counts')
+	setp(this_legend.get_texts(), fontsize=17)
+	setp(this_legend.get_title(), fontsize=17)
 
 main()
