@@ -16,11 +16,22 @@ def main():
 	logenergy, limit = detector.get_limit('ara2_2016')
 	energy = np.power(10.,logenergy)
 
+	logenergy, ara2_aeff = detector.get_aeff('ara2_2016_single')
+	logeV_arianna, arianna_aeff = detector.get_aeff('arianna_sp')
+
 	fig = plt.figure(figsize=(11,8.5))
 	ax_limit = fig.add_subplot(1,1,1)
 	ax_limit.plot(energy,limit,'-s', linewidth=2.0,color='blue',label=r'ARA2 Limit')
 	beautify_limit(ax_limit, 0)
 	fig.savefig("test_functions.png",edgecolor='none',bbox_inches="tight") #save the figure
+
+	fig_aeff = plt.figure(figsize=(11,8.5))
+	ax_aeff = fig_aeff.add_subplot(1,1,1)
+	ax_aeff.plot(energy,ara2_aeff,'-s', linewidth=2.0,color='blue',label=r'1 ARA 200m station')
+	ax_aeff.plot(np.power(10.,logeV_arianna),arianna_aeff,'-o', linewidth=2.0,color='green',label=r'1 ARIANNA South Pole station')
+	beautify_aeff(ax_aeff)
+	fig_aeff.savefig("test_functions2.png",edgecolor='none',bbox_inches="tight") #save the figure
+
 
 def beautify_aeff(this_ax):
 	sizer=20
