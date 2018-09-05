@@ -15,10 +15,10 @@ def main():
 
 	ara2_logeV, ara2_limit = detector.get_limit('ara2_2016')
 	ara_logeV, ara_limit = detector.get_limit('ara2_2016_singlestation_1year')
-	arianna_logeV, arianna_limit = detector.get_limit('arianna_hra3_singlestation_MByear')
+	arianna_logeV, arianna_limit = detector.get_limit('arianna_hra3_singlestation_1year')
 
-	arianna_logeV, arianna_aeff = detector.get_aeff('arianna_hra3_single_fromlimit')
 	ara_logeV, ara_aeff = detector.get_aeff('ara2_2016_single_fromlimit')
+	arianna_logeV, arianna_aeff = detector.get_aeff('arianna_hra3_single_fromlimit')
 
 	fig = plt.figure(figsize=(2.*11,8.5))
 	ax_limit = fig.add_subplot(1,2,2)
@@ -26,7 +26,7 @@ def main():
 
 
 	ax_limit.plot(np.power(10.,ara_logeV),ara_limit,'-s', linewidth=2.0,color='blue',label=r'1 ARA 200m Station @ SP, 1 Year')
-	ax_limit.plot(np.power(10.,arianna_logeV),arianna_limit,'-o', linewidth=2.0,color='green',label=r'1 ARIANNA Surface Station @ MB, 0.58 Year')
+	ax_limit.plot(np.power(10.,arianna_logeV),arianna_limit/0.58,'-o', linewidth=2.0,color='green',label=r'1 ARIANNA Surface Station @ MB, 0.58 Year')
 	beautify_limit(ax_limit, 0)
 
 	ax_aeff.plot(np.power(10.,ara_logeV),ara_aeff,'-s', linewidth=2.0,color='blue',label=r'1 ARA 200m Station @ SP')
