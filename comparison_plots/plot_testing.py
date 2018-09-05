@@ -13,22 +13,22 @@ def main():
 
 
 
-	logenergy, limit = detector.get_limit('ara2_2016')
-	energy = np.power(10.,logenergy)
+	ara2_logeV, ara2_limit = detector.get_limit('ara2_2016')
 
-	logenergy, ara2_aeff = detector.get_aeff('ara2_2016_single')
-	logeV_arianna, arianna_aeff = detector.get_aeff('arianna_sp')
+	arianna_logeV, arianna_aeff = detector.get_aeff('arianna_hra3_single_fromlimit')
+	print arianna_aeff
+	ara_logeV, ara_aeff = detector.get_aeff('ara2_2016_single_fromlimit')
 
 	fig = plt.figure(figsize=(11,8.5))
 	ax_limit = fig.add_subplot(1,1,1)
-	ax_limit.plot(energy,limit,'-s', linewidth=2.0,color='blue',label=r'ARA2 Limit')
+	ax_limit.plot(np.power(10.,ara2_logeV),ara2_limit,'-s', linewidth=2.0,color='blue',label=r'ARA2 Limit')
 	beautify_limit(ax_limit, 0)
 	fig.savefig("test_functions.png",edgecolor='none',bbox_inches="tight") #save the figure
 
 	fig_aeff = plt.figure(figsize=(11,8.5))
 	ax_aeff = fig_aeff.add_subplot(1,1,1)
-	ax_aeff.plot(energy,ara2_aeff,'-s', linewidth=2.0,color='blue',label=r'1 ARA 200m station')
-	ax_aeff.plot(np.power(10.,logeV_arianna),arianna_aeff,'-o', linewidth=2.0,color='green',label=r'1 ARIANNA South Pole station')
+	ax_aeff.plot(np.power(10.,ara_logeV),ara_aeff,'-s', linewidth=2.0,label=r'1 ARA 200m Station @ SP')
+	ax_aeff.plot(np.power(10.,arianna_logeV),arianna_aeff,'-o', linewidth=2.0,label=r'1 ARIANNA Surface Station @ MB')
 	beautify_aeff(ax_aeff)
 	fig_aeff.savefig("test_functions2.png",edgecolor='none',bbox_inches="tight") #save the figure
 
@@ -47,7 +47,7 @@ def beautify_aeff(this_ax):
 	this_ax.set_xlim([xlow,xup]) #set the x limits of the plot
 	this_ax.set_ylim([ylow,yup]) #set the y limits of the plot
 	this_ax.grid()
-	this_legend = this_ax.legend(loc='lower right',title='Trigger Level')
+	this_legend = this_ax.legend(loc='lower right',title='Analysis Level')
 	setp(this_legend.get_texts(), fontsize=17)
 	setp(this_legend.get_title(), fontsize=17)
 	#this_ax.set_yticks([1e-7,1e-6,1e-5,1e-4,1e-3,1e-2,1e-1,1e0,1e1])
