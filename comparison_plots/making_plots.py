@@ -16,9 +16,11 @@ def main():
 	ara2_logeV, ara2_limit = detector.get_limit('ara2_2016')
 	ara_logeV, ara_limit = detector.get_limit('ara2_2016_singlestation_1year')
 	arianna_logeV, arianna_limit = detector.get_limit('arianna_hra3_singlestation_1year')
+	testbed_logeV, testbed_limit = detector.get_limit('ara_testbed_1year')
 
 	ara_logeV, ara_aeff = detector.get_aeff('ara2_2016_single_fromlimit')
 	arianna_logeV, arianna_aeff = detector.get_aeff('arianna_hra3_single_fromlimit')
+	testbed_logeV, testbed_aeff = detector.get_aeff('ara_testbed_fromlimit')
 
 	fig = plt.figure(figsize=(2.*11,8.5))
 	ax_limit = fig.add_subplot(1,2,2)
@@ -27,10 +29,12 @@ def main():
 
 	ax_limit.plot(np.power(10.,ara_logeV),ara_limit,'-s', linewidth=2.0,color='blue',label=r'1 ARA 200m Station @ SP, 1 Year')
 	ax_limit.plot(np.power(10.,arianna_logeV),arianna_limit/0.58,'-o', linewidth=2.0,color='green',label=r'1 ARIANNA Surface Station @ MB, 0.58 Year')
+	ax_limit.plot(np.power(10.,testbed_logeV),testbed_limit,'-^', linewidth=2.0,color='red',label=r'1 ARA Testbed Surface Station @ SP, 1 Year')
 	beautify_limit(ax_limit, 0)
 
 	ax_aeff.plot(np.power(10.,ara_logeV),ara_aeff,'-s', linewidth=2.0,color='blue',label=r'1 ARA 200m Station @ SP')
 	ax_aeff.plot(np.power(10.,arianna_logeV),arianna_aeff,'-o', linewidth=2.0,color='green',label=r'1 ARIANNA Surface Station @ MB')
+	ax_aeff.plot(np.power(10.,testbed_logeV),testbed_aeff,'-^', linewidth=2.0,color='red',label=r'1 ARA Testbed Surface Station @ SP')
 	beautify_aeff(ax_aeff)
 	
 	fig.savefig("current_limits_and_aeff.png",edgecolor='none',bbox_inches="tight") #save the figure
@@ -42,7 +46,7 @@ def beautify_aeff(this_ax):
 	xup = 1.e21 #the uppper x limit
 	ylow = 1.e3 #the lower x limit
 	yup = 1.e10 #the uppper x limit
-	this_ax.set_xlabel('Energy  [eV]',size=sizer) #give it a title
+	this_ax.set_xlabel('EnergZy  [eV]',size=sizer) #give it a title
 	this_ax.set_ylabel('[A$\Omega]_{eff}$  [cm$^2$sr]',size=sizer)
 	this_ax.set_yscale('log')
 	this_ax.set_xscale('log')

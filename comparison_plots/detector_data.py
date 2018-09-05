@@ -20,6 +20,24 @@ def get_limit(resource_name):
 	limit_values: ndarray
 		the limit in the energy bins in units of 1/cm^2/s/sr
 	"""
+	if(resource_name=='ara_testbed'):
+		#this is the ARA testbed limit (445 days x 1 Station) at the analysis level
+		#direct digitization of Fig 13 in https://arxiv.org/abs/1404.5285
+		data = np.genfromtxt("data/testbed_limit.csv",delimiter=',',skip_header=1,names=['energy','limit'])
+		limit=data['limit']
+		energy = np.array([17.,17.5,18.,18.5,19.,19.5,20.,20.5,21.])
+
+		return energy, limit
+
+	if(resource_name=='ara_testbed_1year'):
+		#this is the ARA testbed limit (445 days x 1 Station) at the analysis level
+		#scaling of Fig 13 in https://arxiv.org/abs/1404.5285
+		energy, limit = get_limit('ara_testbed')
+		limit= limit*(445./365.)
+		#to get to 1 year, 1 station value
+		#and rescale to get 1 year: 445./365.
+
+		return energy, limit
 
 	if(resource_name=='ara2_2016'):
 		#this is the ARA2 station limit (7.5 months x Two Stations) at the analysis level
@@ -69,6 +87,20 @@ def get_aeff(resource_name):
 	limit_values: ndarray
 		the aeff values in the energy bins in units of cm^2 * str
 	"""
+
+
+	if(resource_name=='ara_testbed_fromlimit'):
+		#this comes from inverting the analysis level limit curve of Fig 37 in https://arxiv.org/abs/1507.08991
+
+		energy_logev, limit = get_limit('ara_testbed_1year')
+		single_station_aeff = 2.3/np.log(10)/0.5/limit/(const.SecPerYear)
+		
+		#remove the statistical factor of 2.44 for 90% CL
+		#remove ln10 for conversion to logarithmic bins
+		#remove half-decade wide energy bins (0.5)
+		#remove seconds per year
+		
+		return energy_logev, single_station_aeff
 
 	if(resource_name=='ara2_2016_single_fromfigure'):
 		#this come straight from a digitization of Fig 14 in https://arxiv.org/abs/1507.08991
