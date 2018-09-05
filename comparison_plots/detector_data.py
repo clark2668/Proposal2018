@@ -60,11 +60,11 @@ def get_limit(resource_name):
 	if(resource_name=='arianna_hra3_singlestation_1year'):
 		#this is the ARIANNA HRA3 limit (170 days x three Stations) at the analysis level
 		#scaling of Fig 22 in https://arxiv.org/abs/1410.7352
-		data = np.genfromtxt("data/hra3_limit.csv",delimiter=',',skip_header=1,names=['energy','limit'])
-		limit=data['limit']/(data['energy']/1e9)*3.*(170./365.)
 		#to get to 0.58 year 1 station value
 		# we want to rip out the three station factor (3.)
 		#and rescale to get 1 year: 170./365./0.58
+		data = np.genfromtxt("data/hra3_limit.csv",delimiter=',',skip_header=1,names=['energy','limit'])
+		limit=data['limit']/(data['energy']/1e9)*3.*(170./365.)
 		energy = np.array([17.,17.5,18.,18.5,19.,19.5,20.,20.5])
 
 		return energy, limit
