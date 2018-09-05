@@ -47,7 +47,7 @@ def beautify_aeff(this_ax):
 	this_ax.set_xlim([xlow,xup]) #set the x limits of the plot
 	this_ax.set_ylim([ylow,yup]) #set the y limits of the plot
 	this_ax.grid()
-	this_legend = this_ax.legend(loc='lower right',title='Analysis Level')
+	this_legend = this_ax.legend(loc='lower right',title='Trigger Level')
 	setp(this_legend.get_texts(), fontsize=17)
 	setp(this_legend.get_title(), fontsize=17)
 	#this_ax.set_yticks([1e-7,1e-6,1e-5,1e-4,1e-3,1e-2,1e-1,1e0,1e1])
