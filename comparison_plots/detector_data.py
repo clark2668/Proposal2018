@@ -57,6 +57,14 @@ def get_limit(resource_name):
 
 		return energy, limit
 
+	if(resource_name=='ara_100m_1year'):
+		#going to invert the 100m Aeff which we got by scaling the 200m value
+		#this one is a touch hokey because we don't actually have this measurement
+		energy, aeff = get_aeff('ara_100m_1year_fromlimit')
+		limit= 2.44/np.log(10.)/aeff/(const.SecPerYear)
+
+		return energy, limit
+
 	if(resource_name=='arianna_hra3_singlestation_1year'):
 		#this is the ARIANNA HRA3 limit (170 days x three Stations) at the analysis level
 		#scaling of Fig 22 in https://arxiv.org/abs/1410.7352
@@ -81,9 +89,9 @@ def get_aeff(resource_name):
 	Returns
 	-------
 	energy_bins: ndarray
-		the energy bins the aeff is defined over in the units of log(eV)
+		the energy bins the aeff is defined over in the units of log10(eV)
 	limit_values: ndarray
-		the aeff values in the energy bins in units of cm^2 * str
+		the aeff values in the energy bins in units of cm^2 * sr
 	"""
 
 
@@ -110,6 +118,14 @@ def get_aeff(resource_name):
 
 		energy_logev, limit = get_limit('ara_200m_1year')
 		single_station_aeff = 2.44/np.log(10)/0.5/limit/(const.SecPerYear)
+		
+		return energy_logev, single_station_aeff
+
+	if(resource_name=='ara_100m_1year_fromlimit'):
+		#we are going to rescale the 200m value to land roughly in between the ARA deep and ARA testbed
+
+		energy_logev, aeff = get_aeff('ara_200m_1year_fromlimit')
+		single_station_aeff = aeff/5.
 		
 		return energy_logev, single_station_aeff
 

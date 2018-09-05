@@ -17,22 +17,26 @@ def main():
 	ara_logeV, ara_limit = detector.get_limit('ara_200m_1year')
 	arianna_logeV, arianna_limit = detector.get_limit('arianna_hra3_singlestation_1year')
 	testbed_logeV, testbed_limit = detector.get_limit('ara_testbed_1year')
+	a1_logeV, a1_limit = detector.get_limit('ara_100m_1year')
 
 	ara_logeV, ara_aeff = detector.get_aeff('ara_200m_1year_fromlimit')
 	arianna_logeV, arianna_aeff = detector.get_aeff('arianna_hra3_single_fromlimit')
 	testbed_logeV, testbed_aeff = detector.get_aeff('ara_testbed_fromlimit')
+	a1_logeV, a1_aeff = detector.get_aeff('ara_100m_1year_fromlimit')
 
 	fig = plt.figure(figsize=(2.*11,8.5))
 	ax_limit = fig.add_subplot(1,2,2)
 	ax_aeff = fig.add_subplot(1,2,1)	
 
 
-	ax_limit.plot(np.power(10.,ara_logeV),ara_limit,'-s', linewidth=2.0,color='blue',label=r'1 ARA 200m Station @ SP, 1 Year')
+	ax_limit.plot(np.power(10.,ara_logeV),ara_limit,'-<', linewidth=2.0,color='blue',label=r'1 ARA 200m Station @ SP, 1 Year')
+	ax_limit.plot(np.power(10.,a1_logeV),a1_limit,'->', linewidth=2.0,color='black',label=r'1 ARA 100m Station @ SP, 1 Year (approx)')
 	ax_limit.plot(np.power(10.,arianna_logeV),arianna_limit/0.58,'-o', linewidth=2.0,color='green',label=r'1 ARIANNA Surface Station @ MB, 0.58 Year')
 	ax_limit.plot(np.power(10.,testbed_logeV),testbed_limit,'-^', linewidth=2.0,color='red',label=r'1 ARA Testbed Surface Station @ SP, 1 Year')
 	beautify_limit(ax_limit, 0)
 
-	ax_aeff.plot(np.power(10.,ara_logeV),ara_aeff,'-s', linewidth=2.0,color='blue',label=r'1 ARA 200m Station @ SP')
+	ax_aeff.plot(np.power(10.,ara_logeV),ara_aeff,'-<', linewidth=2.0,color='blue',label=r'1 ARA 200m Station @ SP')
+	ax_aeff.plot(np.power(10.,a1_logeV),a1_aeff,'->', linewidth=2.0,color='black',label=r'1 ARA 200m Station @ SP (approx)')
 	ax_aeff.plot(np.power(10.,arianna_logeV),arianna_aeff,'-o', linewidth=2.0,color='green',label=r'1 ARIANNA Surface Station @ MB')
 	ax_aeff.plot(np.power(10.,testbed_logeV),testbed_aeff,'-^', linewidth=2.0,color='red',label=r'1 ARA Testbed Surface Station @ SP')
 	beautify_aeff(ax_aeff)
