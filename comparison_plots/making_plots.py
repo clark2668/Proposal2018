@@ -14,11 +14,11 @@ def main():
 
 
 	ara2_logeV, ara2_limit = detector.get_limit('ara2_2016')
-	ara_logeV, ara_limit = detector.get_limit('ara2_2016_singlestation_1year')
+	ara_logeV, ara_limit = detector.get_limit('ara_200m_1year')
 	arianna_logeV, arianna_limit = detector.get_limit('arianna_hra3_singlestation_1year')
 	testbed_logeV, testbed_limit = detector.get_limit('ara_testbed_1year')
 
-	ara_logeV, ara_aeff = detector.get_aeff('ara2_2016_single_fromlimit')
+	ara_logeV, ara_aeff = detector.get_aeff('ara_200m_1year_fromlimit')
 	arianna_logeV, arianna_aeff = detector.get_aeff('arianna_hra3_single_fromlimit')
 	testbed_logeV, testbed_aeff = detector.get_aeff('ara_testbed_fromlimit')
 
