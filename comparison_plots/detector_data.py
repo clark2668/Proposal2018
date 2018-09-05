@@ -29,6 +29,28 @@ def get_limit(resource_name):
 		energy = np.array([16.,16.5,17.,17.5,18.,18.5,19.,19.5,20.,20.5])
 		return energy, limit
 
+	if(resource_name=='ara2_2016_singlestation_1year'):
+		#this is the ARA2 station limit (7.5 months x Two Stations) at the analysis level
+		#scaling of Fig 37 in https://arxiv.org/abs/1507.08991
+		data = np.genfromtxt("data/ara2_limit.csv",delimiter=',',skip_header=1,names=['energy','limit'])
+		limit=data['limit']*2.*(225./365.)
+		#to get to 1 year, 1 station value
+		#we want to rip out the two station fact (2.)
+		#and rescale to get 1 year: 225./365.
+		energy = np.array([16.,16.5,17.,17.5,18.,18.5,19.,19.5,20.,20.5])
+		return energy, limit
+
+	if(resource_name=='arianna_hra3_singlestation_MByear'):
+		#this is the ARIANNA HRA3 limit (170 days x three Stations) at the analysis level
+		#scaling of Fig 22 in https://arxiv.org/abs/1410.7352
+		data = np.genfromtxt("data/hra3_limit.csv",delimiter=',',skip_header=1,names=['energy','limit'])
+		limit=data['limit']/(data['energy']/1e9)*3.*(170./365.)/0.58
+		#to get to 0.58 year 1 station value
+		# we want to rip out the three station factor (3.)
+		#and rescale to get 1 year: 170./365./0.58
+		energy = np.array([17.,17.5,18.,18.5,19.,19.5,20.,20.5])
+		return energy, limit
+
 
 def get_aeff(resource_name):
 	"""

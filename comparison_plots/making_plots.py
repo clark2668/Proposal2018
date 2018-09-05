@@ -14,23 +14,26 @@ def main():
 
 
 	ara2_logeV, ara2_limit = detector.get_limit('ara2_2016')
+	ara_logeV, ara_limit = detector.get_limit('ara2_2016_singlestation_1year')
+	arianna_logeV, arianna_limit = detector.get_limit('arianna_hra3_singlestation_MByear')
 
 	arianna_logeV, arianna_aeff = detector.get_aeff('arianna_hra3_single_fromlimit')
-	print arianna_aeff
 	ara_logeV, ara_aeff = detector.get_aeff('ara2_2016_single_fromlimit')
 
-	fig = plt.figure(figsize=(11,8.5))
-	ax_limit = fig.add_subplot(1,1,1)
-	ax_limit.plot(np.power(10.,ara2_logeV),ara2_limit,'-s', linewidth=2.0,color='blue',label=r'ARA2 Limit')
-	beautify_limit(ax_limit, 0)
-	fig.savefig("test_functions.png",edgecolor='none',bbox_inches="tight") #save the figure
+	fig = plt.figure(figsize=(2.*11,8.5))
+	ax_limit = fig.add_subplot(1,2,2)
+	ax_aeff = fig.add_subplot(1,2,1)	
 
-	fig_aeff = plt.figure(figsize=(11,8.5))
-	ax_aeff = fig_aeff.add_subplot(1,1,1)
-	ax_aeff.plot(np.power(10.,ara_logeV),ara_aeff,'-s', linewidth=2.0,label=r'1 ARA 200m Station @ SP')
-	ax_aeff.plot(np.power(10.,arianna_logeV),arianna_aeff,'-o', linewidth=2.0,label=r'1 ARIANNA Surface Station @ MB')
+
+	ax_limit.plot(np.power(10.,ara_logeV),ara_limit,'-s', linewidth=2.0,color='blue',label=r'1 ARA 200m Station @ SP, 1 Year')
+	ax_limit.plot(np.power(10.,arianna_logeV),arianna_limit,'-o', linewidth=2.0,color='green',label=r'1 ARIANNA Surface Station @ MB, 0.58 Year')
+	beautify_limit(ax_limit, 0)
+
+	ax_aeff.plot(np.power(10.,ara_logeV),ara_aeff,'-s', linewidth=2.0,color='blue',label=r'1 ARA 200m Station @ SP')
+	ax_aeff.plot(np.power(10.,arianna_logeV),arianna_aeff,'-o', linewidth=2.0,color='green',label=r'1 ARIANNA Surface Station @ MB')
 	beautify_aeff(ax_aeff)
-	fig_aeff.savefig("test_functions2.png",edgecolor='none',bbox_inches="tight") #save the figure
+	
+	fig.savefig("current_limits_and_aeff.png",edgecolor='none',bbox_inches="tight") #save the figure
 
 
 def beautify_aeff(this_ax):
@@ -69,14 +72,17 @@ def beautify_limit(this_ax, num_theory):
 	this_ax.tick_params(labelsize=sizer)
 	this_ax.set_xlim([xlow,xup]) #set the x limits of the plot
 	this_ax.set_ylim([ylow,yup]) #set the y limits of the plot
-	handles, labels = this_ax.get_legend_handles_labels()
-	legend1 = this_ax.legend(handles[0:num_theory], labels[0:num_theory], loc='lower left',title='Flux Models')
-	this_ax.add_artist(legend1)
-	legend2 = this_ax.legend(handles[num_theory:], labels[num_theory:], loc='upper right',title='Analysis Level')
-	setp(legend1.get_texts(), fontsize=17)
-	setp(legend1.get_title(), fontsize=17)
-	setp(legend2.get_texts(), fontsize=17)
-	setp(legend2.get_title(), fontsize=17)
+	this_legend = this_ax.legend(loc='lower right',title='Analysis Level')
+	setp(this_legend.get_texts(), fontsize=17)
+	setp(this_legend.get_title(), fontsize=17)
+	# handles, labels = this_ax.get_legend_handles_labels()
+	# legend1 = this_ax.legend(handles[0:num_theory], labels[0:num_theory], loc='lower left',title='Flux Models')
+	# this_ax.add_artist(legend1)
+	# legend2 = this_ax.legend(handles[num_theory:], labels[num_theory:], loc='upper right',title='Analysis Level')
+	# setp(legend1.get_texts(), fontsize=17)
+	# setp(legend1.get_title(), fontsize=17)
+	# setp(legend2.get_texts(), fontsize=17)
+	# setp(legend2.get_title(), fontsize=17)
 	this_ax.grid()
 
 #pass it the axes and the number of theory curves you're including
