@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
-import numpy as np #import numpy
-import math
+import numpy as np
 from scipy.interpolate import interp1d, splrep, splev
-from pylab import setp
 import constants as const
 
 def get_limit(resource_name):
@@ -65,6 +63,17 @@ def get_limit(resource_name):
 
 		return energy, limit
 
+	if(resource_name=='ara_phased_1year'):
+		#take the ARA 200m station, slide it over by a factor of two
+		#then re-interpolate it to the original half-energy decade bins
+		#the interpolation is most robust in log-log space where the curve is well behaved
+		energy, limit = get_limit('ara_200m_1year')
+		energy = np.log10(np.power(10.,energy)/2.) #move the limit over by a factor of two in linear space
+		interpolator = splrep(energy, np.log10(limit),k=2)
+		energy = np.array([16.,16.5,17.,17.5,18.,18.5,19.,19.5,20])
+		limit_interp = np.power(10.,splev(energy, interpolator))
+		return energy, limit_interp
+
 	if(resource_name=='arianna_hra3_singlestation_1year'):
 		#this is the ARIANNA HRA3 limit (170 days x three Stations) at the analysis level
 		#scaling of Fig 22 in https://arxiv.org/abs/1410.7352
@@ -126,6 +135,18 @@ def get_aeff(resource_name):
 
 		energy_logev, aeff = get_aeff('ara_200m_1year_fromlimit')
 		single_station_aeff = aeff/5.
+		
+		return energy_logev, single_station_aeff
+
+	if(resource_name=='ara_phased_fromlimit'):
+		#this comes from inverting the analysis level limit curve of the phased array estimate
+		#remove the statistical factor of 2.44 for 90% CL
+		#remove ln10 for conversion to logarithmic bins
+		#remove half-decade wide energy bins (0.5)
+		#remove seconds per year
+
+		energy_logev, limit = get_limit('ara_phased_1year')
+		single_station_aeff = 2.44/np.log(10)/0.5/limit/(const.SecPerYear)
 		
 		return energy_logev, single_station_aeff
 
