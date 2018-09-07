@@ -65,17 +65,17 @@ def main():
 	ax_limit = fig.add_subplot(1,2,2)
 	ax_aeff = fig.add_subplot(1,2,1)
 
-	ax_limit.plot(ahlers_energy,ahlers_limit,'-', linewidth=3.0,color='gray',label="Ahlers 2012")
-	ax_limit.fill_between(icecube_energy,icecube_thrumu_lower_efe,icecube_thrumu_upper_efe,facecolor='orange',alpha=0.3)
-	ax_limit.fill_between(icecube_energy,icecube_combined_lower_efe,icecube_combined_upper_efe,facecolor='magenta',alpha=0.3)	
-	ax_limit.plot(icecube_energy,icecube_thrumu_efe,'-.', linewidth=3.0,color='orange',label=r'IceCube Thru-Mu (E$^{-2.19}$)')
-	ax_limit.plot(icecube_energy,icecube_combined_efe,':', linewidth=3.0,color='magenta',label='IceCube Combined (E$^{-2.50}$)')
+	# ax_limit.plot(ahlers_energy,ahlers_limit,'-', linewidth=3.0,color='gray',label="Ahlers 2012")
+	# ax_limit.fill_between(icecube_energy,icecube_thrumu_lower_efe,icecube_thrumu_upper_efe,facecolor='orange',alpha=0.3)
+	# ax_limit.fill_between(icecube_energy,icecube_combined_lower_efe,icecube_combined_upper_efe,facecolor='magenta',alpha=0.3)	
+	# ax_limit.plot(icecube_energy,icecube_thrumu_efe,'-.', linewidth=3.0,color='orange',label=r'IceCube Thru-Mu (E$^{-2.19}$)')
+	# ax_limit.plot(icecube_energy,icecube_combined_efe,':', linewidth=3.0,color='magenta',label='IceCube Combined (E$^{-2.50}$)')
 	ax_limit.plot(np.power(10.,phased_logeV),phased_limit,'-v', linewidth=2.0,color='magenta',label=r'1 ARA Phased 200m Station @ SP, 1 Year')
 	ax_limit.plot(np.power(10.,ara_logeV),ara_200m_limit,'-<', linewidth=2.0,color='blue',label=r'1 ARA 200m Station @ SP, 1 Year')
 	ax_limit.plot(np.power(10.,ara_100m_logeV),ara_100m_limit,'->', linewidth=2.0,color='black',label=r'1 ARA 100m Station @ SP, 1 Year (approx)')
 	ax_limit.plot(np.power(10.,arianna_logeV),arianna_limit/0.58,'-o', linewidth=2.0,color='green',label=r'1 ARIANNA Surface Station @ MB, 0.58 Year')
 	ax_limit.plot(np.power(10.,testbed_logeV),testbed_limit,'-^', linewidth=2.0,color='red',label=r'1 ARA Testbed Surface Station @ SP, 1 Year')	
-	beautify_limit_withtheory(ax_limit,3)
+	beautify_limit(ax_limit)
 
 	ax_aeff.plot(np.power(10.,phased_logeV),phased_aeff,'-<', linewidth=2.0,color='magenta',label=r'1 ARA Phased 200m Station @ SP')
 	ax_aeff.plot(np.power(10.,ara_logeV),ara_200m_aeff,'-<', linewidth=2.0,color='blue',label=r'1 ARA 200m Station @ SP')
@@ -334,6 +334,8 @@ def main():
 
 	beautify_counts(ax3_count_ara)
 	beautify_counts(ax3_count_arianna)
+	ax3_count_ara.set_ylim([0,3])
+	ax3_count_arianna.set_ylim([0,0.08])
 
 	fig3.savefig("counts.png",edgecolor='none',bbox_inches="tight") #save the figure
 
@@ -353,7 +355,7 @@ def beautify_aeff(this_ax):
 	this_ax.set_xlim([xlow,xup]) #set the x limits of the plot
 	this_ax.set_ylim([ylow,yup]) #set the y limits of the plot
 	this_ax.grid()
-	this_legend = this_ax.legend(loc='lower right',title='Analysis Level')
+	this_legend = this_ax.legend(loc='lower left',title='Analysis Level')
 	setp(this_legend.get_texts(), fontsize=17)
 	setp(this_legend.get_title(), fontsize=17)
 	#this_ax.set_yticks([1e-7,1e-6,1e-5,1e-4,1e-3,1e-2,1e-1,1e0,1e1])
@@ -409,15 +411,11 @@ def beautify_counts(this_ax):
 	sizer=20
 	xlow =  1.e15 #the lower x limit
 	xup = 1e21 #the uppper x limit
-	ylow = 1e-20 #the lower y limit
-	yup = 1e-10 #the upper y limit
 	this_ax.set_xlabel('Energy [eV]',size=sizer) #give it a title
 	this_ax.set_ylabel('Events',size=sizer)
-	#this_ax.set_yscale('log')
 	this_ax.set_xscale('log')
 	this_ax.tick_params(labelsize=sizer)
 	this_ax.set_xlim([xlow,xup]) #set the x limits of the plot
-	#this_ax.set_ylim([ylow,yup]) #set the y limits of the plot
 	this_ax.grid()
 	this_legend = this_ax.legend(loc='upper left',title='Analysis Level Event Counts')
 	setp(this_legend.get_texts(), fontsize=17)
