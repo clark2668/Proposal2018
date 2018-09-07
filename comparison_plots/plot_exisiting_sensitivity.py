@@ -347,7 +347,7 @@ def beautify_aeff(this_ax):
 	xup = 1.e21 #the uppper x limit
 	ylow = 1.e2 #the lower x limit
 	yup = 1.e10 #the uppper x limit
-	this_ax.set_xlabel('EnergZy  [eV]',size=sizer) #give it a title
+	this_ax.set_xlabel('Energy  [eV]',size=sizer) #give it a title
 	this_ax.set_ylabel('[A$\Omega]_{eff}$  [cm$^2$sr]',size=sizer)
 	this_ax.set_yscale('log')
 	this_ax.set_xscale('log')
