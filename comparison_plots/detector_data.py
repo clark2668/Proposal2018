@@ -86,6 +86,37 @@ def get_limit(resource_name):
 
 		return energy, limit
 
+	if(resource_name=='icecube_2018'):
+		#this is the IceCube Limit
+		#Fig 6 of https://arxiv.org/abs/1807.01820
+		#we need to kill the E^2 bit
+		data = np.genfromtxt("data/icecube_2018.csv",delimiter=',',skip_header=1,names=['energy','limit'])
+		limit=data['limit']/(data['energy'])
+		#energy = np.log10(data['energy']*1e9)
+		energy = np.array([16,16.5,17.,17.5,18.,18.5,19.,19.5,20.])
+		#energy = data['energy']
+		#limit = np.power(10.,data['limit'])
+
+		return energy, limit
+
+	if(resource_name=='anita_2018'):
+		#this is the ANITA 3-flight limit
+		#Fig 6 of https://arxiv.org/abs/1803.02719
+		data = np.genfromtxt("data/anita_threeflight_2018.csv",delimiter=',',skip_header=1,names=['energy','limit'])
+		limit=data['limit']
+		energy = np.array([18.,18.5,19.,19.5,20.,20.5,21])
+
+		return energy, limit
+
+	if(resource_name=='arianna_2017icrc_1year'):
+		#this is the 1296, 5 year ARIANNA ICRC
+		#Fig 6 of https://pos.sissa.it/301/977/pdf
+		data = np.genfromtxt("data/arianna_2017icrc.csv",delimiter=',',skip_header=1,names=['energy','limit'])
+		limit=data['limit']/(data['energy'])*1296.*(1.5*143./365.)*5.
+		energy = np.array([15.5, 16, 16.5, 17.,17.5,18.,18.5,19.,19.5,20.,20.5,21.])
+
+		return energy, limit
+
 
 def get_aeff(resource_name):
 	"""
@@ -105,6 +136,18 @@ def get_aeff(resource_name):
 
 
 	##first, all the aeffs which come from inverting limit curves
+
+	if(resource_name=='arianna_icrc2017_fromlimit'):
+		#this comes from inverting the analysis level limit curve of Fig 6 in https://pos.sissa.it/301/977/pdf
+		#remove the statistical factor of 2.3 for 90% CL
+		#remove ln10 for conversion to logarithmic bins
+		#remove half-decade wide energy bins (0.5)
+		#remove seconds per year
+
+		energy_logev, limit = get_limit('arianna_2017icrc_1year')
+		single_station_aeff = 2.3/np.log(10)/0.5/limit/(const.SecPerYear)
+		
+		return energy_logev, single_station_aeff
 
 	if(resource_name=='ara_testbed_fromlimit'):
 		#this comes from inverting the analysis level limit curve of Fig 37 in https://arxiv.org/abs/1507.08991
