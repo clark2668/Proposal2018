@@ -74,6 +74,17 @@ def get_limit(resource_name):
 		limit_interp = np.power(10.,splev(energy, interpolator))
 		return energy, limit_interp
 
+	if(resource_name=='ara_phased_100m_1year'):
+		#take the ARA 200m station, rescale it to 100m, and slide it over by a factor of two
+		#then re-interpolate it to the original half-energy decade bins
+		#the interpolation is most robust in log-log space where the curve is well behaved
+		energy, limit = get_limit('ara_100m_1year')
+		energy = np.log10(np.power(10.,energy)/2.) #move the limit over by a factor of two in linear space
+		interpolator = splrep(energy, np.log10(limit),k=2)
+		energy = np.array([16.,16.5,17.,17.5,18.,18.5,19.,19.5,20])
+		limit_interp = np.power(10.,splev(energy, interpolator))
+		return energy, limit_interp
+
 	if(resource_name=='arianna_hra3_singlestation_1year'):
 		#this is the ARIANNA HRA3 limit (170 days x three Stations) at the analysis level
 		#scaling of Fig 22 in https://arxiv.org/abs/1410.7352
@@ -117,6 +128,44 @@ def get_limit(resource_name):
 
 		return energy, limit
 
+def get_exposure(resource_name):
+	"""
+	get_limit
+
+	Parameters
+	----------
+	limit_name: string
+		the exposure curve you want
+	Returns
+	-------
+	energy_bins: ndarray
+		the energy bins the aeff is defined over in the units of log10(eV)
+	expsoure_values: ndarray
+		the exposure values in the energy bins in units of cm^2 * sr * s
+	"""
+	if(resource_name=='best_existing'):
+
+		icecube_logeV, icecube_limit = get_limit('icecube_2018')
+		anita_logeV, anita_limit = get_limit('anita_2018')
+
+		icecube_exposure = 2.44/np.log(10)/0.5/icecube_limit
+		anita_exposure = 2.44/np.log(10)/0.5/anita_limit
+	
+		existing_exposure = icecube_exposure[:8]
+		existing_energy = icecube_logeV[:8]
+
+		#this is the exposure we need to get our hands on
+		existing_exposure = np.append(existing_exposure,anita_exposure[4:5])
+		existing_energy = np.append(existing_energy,20)
+
+		return existing_energy, existing_exposure
+
+	if(resource_name=='target'):
+
+		energy, exposure = get_exposure('best_existing')
+		target_exposure = 10. * exposure
+
+		return energy, target_exposure
 
 def get_aeff(resource_name):
 	"""
@@ -136,6 +185,19 @@ def get_aeff(resource_name):
 
 
 	##first, all the aeffs which come from inverting limit curves
+
+
+	if(resource_name=='ara_phased_100m'):
+		#this comes from inverting the prediction for the 100m ARA phased enhaned array station
+		#remove the statistical factor of 2.44 for 90% CL
+		#remove ln10 for conversion to logarithmic bins
+		#remove half-decade wide energy bins (0.5)
+		#remove seconds per year
+
+		energy_logev, limit = get_limit('ara_phased_100m_1year')
+		single_station_aeff = 2.44/np.log(10)/0.5/limit/(const.SecPerYear)
+		
+		return energy_logev, single_station_aeff
 
 	if(resource_name=='arianna_icrc2017_fromlimit'):
 		#this comes from inverting the analysis level limit curve of Fig 6 in https://pos.sissa.it/301/977/pdf
