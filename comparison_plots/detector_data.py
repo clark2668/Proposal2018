@@ -56,9 +56,9 @@ def get_limit(resource_name):
 		return energy, limit
 
 	if(resource_name=='ara_100m_1year'):
-		#going to invert the 100m Aeff which we got by scaling the 200m value
+		#going to invert the 100m Aeff which we got by geometric averaging the 200m and Testbed
 		#this one is a touch hokey because we don't actually have this measurement
-		energy, aeff = get_aeff('ara_100m_1year_fromlimit')
+		energy, aeff = get_aeff('ara_100m')
 		limit= 2.44/np.log(10.)/aeff/(const.SecPerYear)
 
 		return energy, limit
@@ -235,13 +235,31 @@ def get_aeff(resource_name):
 		
 		return energy_logev, single_station_aeff
 
-	if(resource_name=='ara_100m_1year_fromlimit'):
-		#we are going to rescale the 200m value to land roughly in between the ARA deep and ARA testbed
+	if(resource_name=='ara_100m'):
+		ara_logeV, ara_200m_aeff = get_aeff('ara_200m_1year_fromlimit')
+		testbed_logeV, testbed_aeff =get_aeff('ara_testbed_fromlimit')
+		testbed_logeV=testbed_logeV[:-1]
+		testbed_aeff=testbed_aeff[:-1]
+	
+		ara_logeV=ara_logeV[2:]	
+		ara_200m_aeff=ara_200m_aeff[2:]
+	
+		final = np.sqrt(testbed_aeff*ara_200m_aeff)
 
-		energy_logev, aeff = get_aeff('ara_200m_1year_fromlimit')
-		single_station_aeff = aeff/5.
+		interpolator = splrep(testbed_logeV, np.log10(final),k=2)
+		test_energy = np.arange(16,21,.5)
+		aeff_interp = np.power(10.,splev(test_energy, interpolator))
+		aeff_interp[0]=aeff_interp[0]*.2
+		aeff_interp[1]=aeff_interp[1]*.8
+		return test_energy, aeff_interp
+
+	# if(resource_name=='ara_100m'):
+	# 	#we are going to rescale the 200m value to land roughly in between the ARA deep and ARA testbed
+
+	# 	energy_logev, aeff = get_aeff('ara_200m_1year_fromlimit')
+	# 	single_station_aeff = aeff/5.
 		
-		return energy_logev, single_station_aeff
+	# 	return energy_logev, single_station_aeff
 
 	if(resource_name=='ara_phased_fromlimit'):
 		#this comes from inverting the analysis level limit curve of the phased array estimate
